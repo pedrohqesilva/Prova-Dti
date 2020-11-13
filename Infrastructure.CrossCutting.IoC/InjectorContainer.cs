@@ -12,11 +12,27 @@ namespace Infrastructure.CrossCutting.IoC
     {
         public static void Register(IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<MyContext>(options =>
-                options
-                    .UseSqlite(connectionString)
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                var serviceProvider = new ServiceCollection()
+                    .AddEntityFrameworkInMemoryDatabase()
+                    .AddEntityFrameworkProxies()
+                    .BuildServiceProvider();
+
+                services.AddDbContext<MyContext>(options => options
+                    .UseInternalServiceProvider(serviceProvider)
+                    .UseInMemoryDatabase("InMemoryDb")
                     .UseLazyLoadingProxies()
-            );
+                    .EnableSensitiveDataLogging());
+            }
+            else
+            {
+                services.AddDbContext<MyContext>(options =>
+                    options
+                        .UseSqlite(connectionString)
+                        .UseLazyLoadingProxies()
+                );
+            }
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductRepository, ProductRepository>();

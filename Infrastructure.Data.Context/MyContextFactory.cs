@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Infrastructure.Data.Context
 {
-    public class ContextFactory : IDesignTimeDbContextFactory<MyContext>
+    public class MyContextFactory : IDesignTimeDbContextFactory<MyContext>
     {
         public MyContext CreateDbContext(string[] args)
         {
